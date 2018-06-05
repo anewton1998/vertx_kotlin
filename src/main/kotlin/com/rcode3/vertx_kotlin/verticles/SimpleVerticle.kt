@@ -4,6 +4,9 @@ package com.rcode3.vertx_kotlin.verticles
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 
+/**
+ * This verticle just demonstrates what is needed to create a verticle.
+ */
 class SimpleVerticle : AbstractVerticle() {
 
     override fun start( startFuture: Future<Void> ) {
