@@ -19,6 +19,7 @@ class ExampleJSONReceiver : AbstractVerticle() {
             }
             else {
                 println( "unable to get counter" )
+                startFuture.failed()
             }
         }
 
