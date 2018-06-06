@@ -1,5 +1,5 @@
 // Copyright (C) 2018 Andrew Newton
-package com.rcode3.vertx_kotlin.verticles
+package com.rcode3.vertx_kotlin.verticles.example
 
 import com.rcode3.vertx_kotlin.EXAMPLE_JSON_ADDR
 import com.rcode3.vertx_kotlin.JSON_PROP_COUNT

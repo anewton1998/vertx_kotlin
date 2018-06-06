@@ -45,6 +45,10 @@ compileTestKotlin {
 
 jar {
     manifest {
+
+        /**
+         * To use our own main method to start vertx, this points the Main-Class at MainKt
+         */
         attributes 'Main-Class': 'com.rcode3.vertx_kotlin.MainKt'
     }
     from {
