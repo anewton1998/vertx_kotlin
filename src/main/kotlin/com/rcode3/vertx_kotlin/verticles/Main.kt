@@ -20,7 +20,9 @@ class Main : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>) {
 
-        logger.info( "hello world" )
+        println( "jul logging config ${System.getProperty("java.util.logging.config.file")} ")
+
+        logger.debug( "hello world" )
         vertx.deployVerticle( SimpleVerticle::class.java.name ) { handleVerticleDeployment( it ) }
         vertx.deployVerticle( ExampleJSONReceiver::class.java.name ) { handleVerticleDeployment( it ) }
         vertx.deployVerticle( ExampleJSONSender::class.java.name ) { handleVerticleDeployment( it ) }
@@ -33,10 +35,10 @@ class Main : AbstractVerticle() {
 
     fun handleVerticleDeployment(result: AsyncResult<String>) {
         if( result.succeeded() ) {
-            logger.info{ "Deployment of ${result.result()} succeeded" }
+            logger.debug{ "Deployment of ${result.result()} succeeded" }
         }
         else {
-            logger.info{ "Deployment of ${result.result()} failed" }
+            logger.error{ "Deployment of ${result.result()} failed" }
             vertx.close()
         }
     }
