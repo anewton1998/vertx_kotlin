@@ -7,6 +7,7 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.JsonObject
 import io.vertx.core.shareddata.Counter
+import mu.KLogging
 
 /**
  * This verticle receives JSON text from [ExampleJSONSender], and modifies it with a counter
@@ -21,6 +22,8 @@ import io.vertx.core.shareddata.Counter
  */
 class ExampleJSONReceiver : AbstractVerticle() {
 
+    companion object : KLogging()
+
     override fun start(startFuture: Future<Void> ) {
 
         // gets the reference to the shared data
@@ -31,7 +34,7 @@ class ExampleJSONReceiver : AbstractVerticle() {
                 counter = it.result()
             }
             else {
-                println( "unable to get counter" )
+                logger.error {  "unable to get counter" }
                 startFuture.failed()
             }
         }
@@ -44,7 +47,7 @@ class ExampleJSONReceiver : AbstractVerticle() {
 
             // the message is JSON. make the JSON usable
             val json = JsonObject( message.body() )
-            println( "received json: $json")
+            logger.info( "received json: $json" )
 
             // increment and get the counter
             counter.incrementAndGet {
@@ -56,7 +59,7 @@ class ExampleJSONReceiver : AbstractVerticle() {
                 }
 
                 else {
-                    println( "error getting counter" )
+                    logger.error( "error getting counter" )
                 }
             }
         }

@@ -7,6 +7,7 @@ import com.rcode3.vertx_kotlin.PERIODIC_TIMER_ADDR
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.JsonObject
+import mu.KLogging
 
 /**
  * This is an example of verticle that sends JSON on the event bus.
@@ -18,6 +19,8 @@ import io.vertx.core.json.JsonObject
  * JSON object that models JSON.
  */
 class ExampleJSONSender : AbstractVerticle() {
+
+    companion object : KLogging()
 
     override fun start(startFuture: Future<Void>) {
 
@@ -32,7 +35,7 @@ class ExampleJSONSender : AbstractVerticle() {
             eb.send<String>( EXAMPLE_JSON_ADDR, json.toString() ) { ar ->
 
                 // get the reply from the sending
-                println( "received reply ${ar.result().body()}")
+                logger.info{ "received reply ${ar.result().body()}" }
             }
         }
 
