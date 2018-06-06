@@ -8,6 +8,15 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.JsonObject
 
+/**
+ * This is an example of verticle that sends JSON on the event bus.
+ *
+ * This verticle listens for a timer event. When that timer event
+ * goes off, it sends an event with some JSON text.
+ *
+ * Note that it is sending JSON as actual string text, not as a
+ * JSON object that models JSON.
+ */
 class ExampleJSONSender : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>) {

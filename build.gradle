@@ -20,6 +20,14 @@ apply plugin: 'kotlin'
 apply plugin: 'application'
 
 sourceCompatibility = 1.8
+
+/**
+ * This is used by the gradle run task to start Vertx.
+ * By pointing at our own Main.kt file, this start Vertx with a typical
+ * main method.
+ *
+ * Another approach is to use a Main verticle.
+ */
 mainClassName = "com.rcode3.vertx_kotlin.MainKt"
 
 repositories {
@@ -48,6 +56,8 @@ jar {
 
         /**
          * To use our own main method to start vertx, this points the Main-Class at MainKt
+         *
+         * Another approach is to use a Main verticle.
          */
         attributes 'Main-Class': 'com.rcode3.vertx_kotlin.MainKt'
     }

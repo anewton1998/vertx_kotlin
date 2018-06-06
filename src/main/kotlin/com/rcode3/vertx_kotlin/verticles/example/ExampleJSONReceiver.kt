@@ -8,11 +8,24 @@ import io.vertx.core.Future
 import io.vertx.core.json.JsonObject
 import io.vertx.core.shareddata.Counter
 
+/**
+ * This verticle receives JSON text from [ExampleJSONSender], and modifies it with a counter
+ * and sends the JSON text back.
+ *
+ * The counter is using the Vertx shared data, so technically it could be accessed by other
+ * verticles if necessary.
+ *
+ * The received JSON has a count with a value of null. Once received, the JSON is modified
+ * and sent back with an actual value in the JSON.
+ *
+ */
 class ExampleJSONReceiver : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void> ) {
 
+        // gets the reference to the shared data
         lateinit var counter : Counter
+        // get a reference to the counter
         vertx.sharedData().getCounter( "my.counter" ) {
             if( it.succeeded() ) {
                 counter = it.result()
