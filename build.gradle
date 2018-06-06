@@ -28,7 +28,20 @@ sourceCompatibility = 1.8
  *
  * Another approach is to use a Main verticle.
  */
-mainClassName = "com.rcode3.vertx_kotlin.MainKt"
+//mainClassName = "$my_main_class"
+
+/**
+ * This is used by the gradle run task to start Vertx.
+ * This points to the Vertx Launcher.
+ *
+ * Another approach is to use a standard class with a main method.
+ * (see above)
+ */
+mainClassName = "$vertx_launcher"
+
+run {
+    args "run", "$my_main_verticle"
+}
 
 repositories {
     mavenCentral()
@@ -59,7 +72,19 @@ jar {
          *
          * Another approach is to use a Main verticle.
          */
-        attributes 'Main-Class': 'com.rcode3.vertx_kotlin.MainKt'
+        //attributes 'Main-Class': "$my_main_class"
+
+        /**
+         * To use the built-in Vertx Launcher to start vertx, this points to the main class.
+         *
+         * Another approach is to use a class with a Main method. (see above)
+         */
+        attributes 'Main-Class': "$vertx_launcher"
+
+        /**
+         * This points the Vertx Launcher at our Main verticle.
+         */
+        attributes 'Main-Verticle': "$my_main_verticle"
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree( it ) }
