@@ -6,7 +6,8 @@ import com.rcode3.vertx_kotlin.JSON_PROP_COUNT
 import com.rcode3.vertx_kotlin.PERIODIC_TIMER_ADDR
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
-import io.vertx.core.json.JsonObject
+import io.vertx.kotlin.core.json.json
+import io.vertx.kotlin.core.json.obj
 import mu.KLogging
 
 /**
@@ -31,7 +32,13 @@ class ExampleJSONSender : AbstractVerticle() {
         eb.consumer<Any>( PERIODIC_TIMER_ADDR ) {
 
             // when the timer event occurs, send a JSON object
-            val json = JsonObject().putNull( JSON_PROP_COUNT )
+            // this uses the vertx-lang-kotlin json extensions on JsonObject in vertx.core
+            val json = json{
+                obj(
+                    JSON_PROP_COUNT to null
+                )
+            }
+
             eb.send<String>( EXAMPLE_JSON_ADDR, json.toString() ) { ar ->
 
                 // get the reply from the sending
