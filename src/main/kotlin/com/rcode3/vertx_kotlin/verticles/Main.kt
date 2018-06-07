@@ -20,8 +20,6 @@ class Main : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>) {
 
-        println( "jul logging config ${System.getProperty("java.util.logging.config.file")} ")
-
         logger.debug( "hello world" )
         vertx.deployVerticle( SimpleVerticle::class.java.name ) { handleVerticleDeployment( it ) }
         vertx.deployVerticle( ExampleJSONReceiver::class.java.name ) { handleVerticleDeployment( it ) }
