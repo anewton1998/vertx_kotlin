@@ -55,6 +55,7 @@ dependencies {
     compile "io.vertx:vertx-core:$vertx_version"
     testCompile "io.vertx:vertx-junit5:$vertx_version"
     testCompile "org.assertj:assertj-core:3.8.0"
+    // the jupiter-engine version needs to be kept in line with the vertx-junit5 dependency on junit
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.3"
 }
 
