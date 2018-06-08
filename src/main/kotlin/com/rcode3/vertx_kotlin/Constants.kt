@@ -15,3 +15,8 @@ const val EXAMPLE_JSON_ADDR = "example.json"
  * JSON property name for count
  */
 const val JSON_PROP_COUNT = "count"
+
+/**
+ * Address for [com.rcode3.vertx_kotlin.verticles.example.Validator]
+ */
+const val VALIDATOR_ADDR = "validator"

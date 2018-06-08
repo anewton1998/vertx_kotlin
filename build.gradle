@@ -45,6 +45,7 @@ run {
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
@@ -54,6 +55,7 @@ dependencies {
     compile "org.slf4j:slf4j-jdk14:1.7.25"
     compile "io.vertx:vertx-core:$vertx_version"
     compile "io.vertx:vertx-lang-kotlin:$vertx_version"
+    compile "com.markodevcic.kvalidation:KValidation:1.0.0"
     testCompile "io.vertx:vertx-junit5:$vertx_version"
     testCompile "org.assertj:assertj-core:3.8.0"
     // the jupiter-engine version needs to be kept in line with the vertx-junit5 dependency on junit
