@@ -8,6 +8,7 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
+import io.vertx.kotlin.core.eventbus.DeliveryOptions
 import io.vertx.kotlin.core.json.array
 import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.core.json.json
@@ -29,12 +30,14 @@ class Validator : AbstractVerticle() {
         eb.consumer<JsonObject>( VALIDATOR_ADDR ) { message ->
 
             val result = validateUser( message.body() )
+            val deliveryOptions = DeliveryOptions()
             if( result.isEmpty ) {
-                message.reply( result )
+                deliveryOptions.addHeader( "validated", true.toString() )
             }
             else {
-                message.fail( 0, result.toString() )
+                deliveryOptions.addHeader( "error", true.toString() )
             }
+            message.reply( result, deliveryOptions )
 
         }
 
