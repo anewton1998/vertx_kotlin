@@ -44,46 +44,50 @@ class Validator : AbstractVerticle() {
         startFuture.complete()
     }
 
-    /**
-     * Takes in a [JsonObject] with user data.
-     * Return a [JsonObject] with validation errors.
-     */
-    fun validateUser( user : JsonObject ) : JsonObject {
+    companion object {
 
-        val validator = JsonValidator( user )
+        /**
+         * Takes in a [JsonObject] with user data.
+         * Return a [JsonObject] with validation errors.
+         */
+        fun validateUser( user : JsonObject ) : JsonObject {
 
-        validator.forProperty { it.getString( "firstName" ) } rules {
-            length( 4 )
-        }
+            val validator = JsonValidator( user )
 
-        validator.forProperty { it.getString( "lastName" ) } rules {
-            length( 4 )
-        }
-
-        validator.forProperty { it.getInteger( "age" ) } rules {
-            gte( 18 )
-        }
-
-        // validate
-        val result = validator.validate()
-
-        // get the errors
-        val retval : JsonObject = if( !result.isValid ) {
-            json {
-                obj(
-                        "errors" to array {
-                            for (error in result.validationErrors) {
-                                add(error.toString())
-                            }
-                        }
-                )
+            validator.forProperty { it.getString( "firstName" ) } rules {
+                length( 4 )
             }
-        }
-        else {
-            json { obj() }
+
+            validator.forProperty { it.getString( "lastName" ) } rules {
+                length( 4 )
+            }
+
+            validator.forProperty { it.getInteger( "age" ) } rules {
+                gte( 18 )
+            }
+
+            // validate
+            val result = validator.validate()
+
+            // get the errors
+            val retval : JsonObject = if( !result.isValid ) {
+                json {
+                    obj(
+                            "errors" to array {
+                                for (error in result.validationErrors) {
+                                    add(error.toString())
+                                }
+                            }
+                    )
+                }
+            }
+            else {
+                json { obj() }
+            }
+
+            return retval
         }
 
-        return retval
     }
 
     class JsonValidator( jsonObject: JsonObject ) : ValidatorBase<JsonObject>( jsonObject ) {}
