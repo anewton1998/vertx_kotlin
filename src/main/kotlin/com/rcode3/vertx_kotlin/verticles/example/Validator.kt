@@ -4,8 +4,8 @@ package com.rcode3.vertx_kotlin.verticles.example
 import com.markodevcic.kvalidation.ValidatorBase
 import com.markodevcic.kvalidation.rules
 import com.rcode3.vertx_kotlin.VALIDATOR_ADDR
-import io.vertx.core.AbstractVerticle
-import io.vertx.core.Future
+import io.vertx.core.*
+import io.vertx.core.eventbus.Message
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.eventbus.DeliveryOptions
@@ -86,6 +86,10 @@ class Validator : AbstractVerticle() {
             }
 
             return retval
+        }
+
+        fun validateUser( vertx: Vertx, user : JsonObject, handler: Handler<AsyncResult<Message<JsonObject>>>) {
+            vertx.eventBus().send<JsonObject>( VALIDATOR_ADDR, user, handler )
         }
 
     }

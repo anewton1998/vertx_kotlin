@@ -88,4 +88,43 @@ object ValidatorTest {
         )
 
     }
+
+    @DisplayName( "Asynchronouse Validator Helper Logic" )
+    @Test
+    fun testValidatorVerticleHelper( vertx: Vertx, testContext: VertxTestContext ) {
+
+        // setup the JSON object to test
+        val json = json{
+            obj(
+                    "firstName" to "Bob",
+                    "lastName"  to "Smurd",
+                    "age" to 18
+            )
+        }
+
+        val checkpoint = testContext.checkpoint( 2 )
+
+        Validator.validateUser( vertx, json,
+                testContext.succeeding{
+                    testContext.verify {
+                        assertThat( it.headers()[ "validated" ] )
+                        assertThat( it.body().isEmpty )
+                        checkpoint.flag()
+                    }
+                }
+        )
+
+        json.put( "age", 16 )
+
+        Validator.validateUser( vertx, json,
+                testContext.succeeding{
+                    testContext.verify {
+                        assertThat( it.headers()[ "error" ] )
+                        assertThat( ! it.body().isEmpty )
+                        checkpoint.flag()
+                    }
+                }
+        )
+
+    }
 }
