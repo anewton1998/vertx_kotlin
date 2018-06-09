@@ -28,6 +28,13 @@ class Validator : AbstractVerticle() {
 
         eb.consumer<JsonObject>( VALIDATOR_ADDR ) { message ->
 
+            val result = validateUser( message.body() )
+            if( result.isEmpty ) {
+                message.reply( result )
+            }
+            else {
+                message.fail( 0, result.toString() )
+            }
 
         }
 
