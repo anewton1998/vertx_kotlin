@@ -3,14 +3,8 @@ package com.rcode3.vertx_kotlin.verticles
 
 import com.rcode3.vertx_kotlin.PERIODIC_TIMER_ADDR
 import com.rcode3.vertx_kotlin.handleVerticleDeployment
-import com.rcode3.vertx_kotlin.verticles.example.ExampleJSONReceiver
-import com.rcode3.vertx_kotlin.verticles.example.ExampleJSONSender
-import com.rcode3.vertx_kotlin.verticles.example.SimpleVerticle
-import com.rcode3.vertx_kotlin.verticles.example.Validator
-import io.vertx.core.AbstractVerticle
-import io.vertx.core.AsyncResult
-import io.vertx.core.CompositeFuture
-import io.vertx.core.Future
+import com.rcode3.vertx_kotlin.verticles.example.*
+import io.vertx.core.*
 import mu.KLogging
 
 /**
@@ -24,6 +18,7 @@ class Main : AbstractVerticle() {
     override fun start(startFuture: Future<Void>) {
 
         logger.debug( "hello world" )
+        logger.info( "configuration: ${config()}")
 
         // The CompositeFuture is used to coordinate the deployment of all the verticles
         // using a future from each.
@@ -34,7 +29,8 @@ class Main : AbstractVerticle() {
                         deployVerticle( SimpleVerticle() ),
                         deployVerticle( ExampleJSONSender() ),
                         deployVerticle( ExampleJSONReceiver() ),
-                        deployVerticle( Validator() )
+                        deployVerticle( Validator() ),
+                        deployVerticle( Configured() )
                 )
         ).setHandler{ ar ->
             if( ar.succeeded() ) {
@@ -44,7 +40,7 @@ class Main : AbstractVerticle() {
                 startFuture.complete()
             }
             else {
-                startFuture.fail( "one of the verticles failed to deploy" )
+                startFuture.fail( ar.cause() )
             }
         }
 
@@ -57,8 +53,9 @@ class Main : AbstractVerticle() {
      */
     fun deployVerticle( verticle: AbstractVerticle ) : Future<String> {
         val future = Future.future<String>()
+        val options = DeploymentOptions().setConfig( config() )
         future.setHandler { handleVerticleDeployment( it ) }
-        vertx.deployVerticle( verticle, future.completer() )
+        vertx.deployVerticle( verticle, options, future.completer() )
         return future
     }
 

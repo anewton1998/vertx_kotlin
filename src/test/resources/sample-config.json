@@ -1,0 +1,14 @@
+{
+  // NOTE: normal JSON does not allow comments
+  // however, Vertx uses a Jackson feature that allows
+  // these single line comments
+
+  // database settings
+  "db" : {
+    "url" : "jdbc:hsqldb:mem:test?shutdown=true",
+    "driver_class" : "org.hsqldb.jdbcDriver",
+    "max_pool_size" : 30,
+    "user" : "SA",
+    "password" : ""
+  }
+}
