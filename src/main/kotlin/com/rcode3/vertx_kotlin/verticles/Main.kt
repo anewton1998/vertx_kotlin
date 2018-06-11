@@ -3,6 +3,7 @@ package com.rcode3.vertx_kotlin.verticles
 
 import com.rcode3.vertx_kotlin.PERIODIC_TIMER_ADDR
 import com.rcode3.vertx_kotlin.handleVerticleDeployment
+import com.rcode3.vertx_kotlin.verticles.db.Init
 import com.rcode3.vertx_kotlin.verticles.example.*
 import io.vertx.core.*
 import mu.KLogging
@@ -30,7 +31,8 @@ class Main : AbstractVerticle() {
                         deployVerticle( ExampleJSONSender() ),
                         deployVerticle( ExampleJSONReceiver() ),
                         deployVerticle( Validator() ),
-                        deployVerticle( Configured() )
+                        deployVerticle( Configured() ),
+                        deployVerticle( Init() )
                 )
         ).setHandler{ ar ->
             if( ar.succeeded() ) {
