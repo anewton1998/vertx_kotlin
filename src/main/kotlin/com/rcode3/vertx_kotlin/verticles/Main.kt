@@ -21,6 +21,50 @@ class Main : AbstractVerticle() {
         logger.debug( "hello world" )
         logger.info( "configuration: ${config()}")
 
+        val stages = listOf(
+                listOf(
+                        Init()
+                ),
+                listOf(
+                        SimpleVerticle(),
+                        ExampleJSONReceiver(),
+                        ExampleJSONSender(),
+                        Validator(),
+                        Configured()
+                )
+        )
+
+        // THIS ISN"T WORKING!!!!!!
+
+        var future : CompositeFuture? = null
+        stages.forEachIndexed {index,stage ->
+            future?.let{
+                future!!.compose{
+                    logger.debug( "Deploying verticles in stage $index")
+                    future = CompositeFuture.all(
+                            stage.map{ verticle -> deployVerticle( verticle ) }
+                    )
+                    future
+                }
+            } ?: run{
+                logger.debug( "Deploying verticles in stage $index")
+                future = CompositeFuture.all(
+                        stage.map{ verticle -> deployVerticle( verticle ) }
+                )
+            }
+        }
+
+        future!!.compose(
+                { v ->
+                    vertx.setPeriodic( 2000 ) {
+                        vertx.eventBus().publish(PERIODIC_TIMER_ADDR, null)
+                    }
+                },
+                startFuture
+        )
+
+/*
+
         // The CompositeFuture is used to coordinate the deployment of all the verticles
         // using a future from each.
         //
@@ -45,6 +89,7 @@ class Main : AbstractVerticle() {
                 startFuture.fail( ar.cause() )
             }
         }
+*/
 
     }
 
@@ -69,8 +114,7 @@ class Main : AbstractVerticle() {
             logger.debug{ "Deployment of ${result.result()} succeeded" }
         }
         else {
-            logger.error{ "Deployment of ${result.result()} failed" }
-            vertx.close()
+            logger.error( "Deployment of ${result.result()} failed", result.cause() )
         }
     }
 }
