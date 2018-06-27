@@ -21,10 +21,17 @@ class Main : AbstractVerticle() {
         logger.debug( "hello world" )
         logger.info( "configuration: ${config()}")
 
+        /**
+         * Stage1 would be things that initialize resources, or perhaps verify resources are available
+         * for a fail-fast start
+         */
         val stage1 = listOf(
                 Init()
         )
 
+        /**
+         * Stage2 are the verticles that are business logice etc...
+         */
         val stage2 = listOf(
                 SimpleVerticle(),
                 ExampleJSONReceiver(),
@@ -33,6 +40,9 @@ class Main : AbstractVerticle() {
                 Configured()
         )
 
+        /**
+         * Stage3 would bring up the endpoints and things that start "listening" for requests.
+         */
         val stage3 = emptyList<AbstractVerticle>()
 
         CompositeFuture.all(

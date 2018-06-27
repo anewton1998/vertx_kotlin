@@ -17,12 +17,12 @@ class Init : AbstractVerticle() {
             create table user (
               name varchar(255) primary key,
               password varchar(255)
-            }
+            )
             """ )
         batch.add( """
             insert into user values
-              ( "bob", "12345" ),
-              ( "alice", "abcde" )
+              ( 'bob', '12345' ),
+              ( 'alice', 'abcde' )
             """)
 
         client.getConnection{
@@ -36,11 +36,13 @@ class Init : AbstractVerticle() {
                     if( it.failed() ) {
                         startFuture.fail( it.cause() )
                     }
+                    else {
+                        startFuture.complete()
+                    }
                 }
             }
         }
 
-        startFuture.complete()
     }
 
 

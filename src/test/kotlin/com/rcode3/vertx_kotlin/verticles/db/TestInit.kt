@@ -6,6 +6,7 @@ import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -16,6 +17,7 @@ object TestInit {
 
     @DisplayName( "Init Verticle Deploys and initializes the database" )
     @Test
+    @Disabled //disabled because this is done in Main.
     fun testMainVerticle( vertx : Vertx, testContext: VertxTestContext ) {
 
         // Normally this would be in a prepare function, but the thing
