@@ -17,7 +17,6 @@ object TestInit {
 
     @DisplayName( "Init Verticle Deploys and initializes the database" )
     @Test
-    @Disabled //disabled because this is done in Main.
     fun testMainVerticle( vertx : Vertx, testContext: VertxTestContext ) {
 
         // Normally this would be in a prepare function, but the thing

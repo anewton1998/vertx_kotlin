@@ -13,6 +13,10 @@ class Init : AbstractVerticle() {
         val client = JDBCClient.createShared( vertx, config()[ "db" ] )
 
         var batch = mutableListOf<String>()
+
+        batch.add( """
+            DROP SCHEMA PUBLIC CASCADE
+        """)
         batch.add( """
             create table user (
               name varchar(255) primary key,
