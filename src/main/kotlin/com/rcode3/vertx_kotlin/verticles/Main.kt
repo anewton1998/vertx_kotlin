@@ -21,75 +21,43 @@ class Main : AbstractVerticle() {
         logger.debug( "hello world" )
         logger.info( "configuration: ${config()}")
 
-        val stages = listOf(
-                listOf(
-                        Init()
-                ),
-                listOf(
-                        SimpleVerticle(),
-                        ExampleJSONReceiver(),
-                        ExampleJSONSender(),
-                        Validator(),
-                        Configured()
-                )
+        val stage1 = listOf(
+                Init()
         )
 
-        // THIS ISN"T WORKING!!!!!!
-
-        var future : CompositeFuture? = null
-        stages.forEachIndexed {index,stage ->
-            future?.let{
-                future!!.compose{
-                    logger.debug( "Deploying verticles in stage $index")
-                    future = CompositeFuture.all(
-                            stage.map{ verticle -> deployVerticle( verticle ) }
-                    )
-                    future
-                }
-            } ?: run{
-                logger.debug( "Deploying verticles in stage $index")
-                future = CompositeFuture.all(
-                        stage.map{ verticle -> deployVerticle( verticle ) }
-                )
-            }
-        }
-
-        future!!.compose(
-                { v ->
-                    vertx.setPeriodic( 2000 ) {
-                        vertx.eventBus().publish(PERIODIC_TIMER_ADDR, null)
-                    }
-                },
-                startFuture
+        val stage2 = listOf(
+                SimpleVerticle(),
+                ExampleJSONReceiver(),
+                ExampleJSONSender(),
+                Validator(),
+                Configured()
         )
 
-/*
+        val stage3 = emptyList<AbstractVerticle>()
 
-        // The CompositeFuture is used to coordinate the deployment of all the verticles
-        // using a future from each.
-        //
-        // Once all the verticles are deployed, it sets a periodic timer
         CompositeFuture.all(
-                listOf(
-                        deployVerticle( SimpleVerticle() ),
-                        deployVerticle( ExampleJSONSender() ),
-                        deployVerticle( ExampleJSONReceiver() ),
-                        deployVerticle( Validator() ),
-                        deployVerticle( Configured() ),
-                        deployVerticle( Init() )
-                )
-        ).setHandler{ ar ->
-            if( ar.succeeded() ) {
-                vertx.setPeriodic( 2000 ) {
-                    vertx.eventBus().publish(PERIODIC_TIMER_ADDR, null)
+                stage1.map{ deployVerticle( it ) }
+        ).compose{
+            val cf2 = CompositeFuture.all(
+                    stage2.map{ deployVerticle( it ) }
+            ).compose{
+                val cf3 = CompositeFuture.all(
+                        stage3.map{ deployVerticle( it ) }
+                ).setHandler{ ar ->
+                    if( ar.succeeded() ) {
+                        vertx.setPeriodic( 2000 ) {
+                            vertx.eventBus().publish(PERIODIC_TIMER_ADDR, null)
+                        }
+                        startFuture.complete()
+                    }
+                    else {
+                        startFuture.fail( ar.cause() )
+                    }
                 }
-                startFuture.complete()
+                cf3
             }
-            else {
-                startFuture.fail( ar.cause() )
-            }
+            cf2
         }
-*/
 
     }
 
