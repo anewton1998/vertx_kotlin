@@ -17,6 +17,8 @@ class Init : AbstractVerticle() {
         batch.add( """
             DROP SCHEMA PUBLIC CASCADE
         """)
+
+        // Users
         batch.add( """
             create table user (
               name varchar(255) primary key,
@@ -28,6 +30,33 @@ class Init : AbstractVerticle() {
               ( 'bob', '12345' ),
               ( 'alice', 'abcde' )
             """)
+
+        // Devices
+        batch.add( """
+            create sequence device_id_seq
+        """.trimIndent())
+        batch.add( """
+            create table devices (
+                owner varchar(255),
+                id integer,
+                model varchar(255),
+                primary key( id ),
+                foreign key( owner ) references user(name)
+            )
+        """.trimIndent())
+
+        // Cats
+        batch.add( """
+            create table cats (
+                name varchar(255) primary key,
+                type varchar(50)
+            )
+        """.trimIndent())
+        batch.add( """
+            insert into cats values
+                ( 'mitzy', 'calico' ),
+                ( 'patches', 'tabby' )
+        """.trimIndent())
 
         client.getConnection{
             if( it.failed() ) {
