@@ -36,37 +36,36 @@ class Main : AbstractVerticle() {
                 SimpleVerticle(),
                 ExampleJSONReceiver(),
                 ExampleJSONSender(),
-                Validator(),
-                Configured()
+                Validator()
         )
 
         /**
          * Stage3 would bring up the endpoints and things that start "listening" for requests.
          */
-        val stage3 = emptyList<AbstractVerticle>()
+        val stage3 = listOf(
+                Configured()
+        )
 
         CompositeFuture.all(
                 stage1.map{ deployVerticle( it ) }
-        ).compose{
-            val cf2 = CompositeFuture.all(
+        ).compose {
+            CompositeFuture.all(
                     stage2.map{ deployVerticle( it ) }
-            ).compose{
-                val cf3 = CompositeFuture.all(
-                        stage3.map{ deployVerticle( it ) }
-                ).setHandler{ ar ->
-                    if( ar.succeeded() ) {
-                        vertx.setPeriodic( 2000 ) {
-                            vertx.eventBus().publish(PERIODIC_TIMER_ADDR, null)
-                        }
-                        startFuture.complete()
-                    }
-                    else {
-                        startFuture.fail( ar.cause() )
-                    }
+            )
+        }.compose {
+            CompositeFuture.all(
+                    stage3.map{ deployVerticle( it ) }
+            )
+        }.setHandler{ ar ->
+            if( ar.succeeded() ) {
+                vertx.setPeriodic( 2000 ) {
+                    vertx.eventBus().publish(PERIODIC_TIMER_ADDR, null)
                 }
-                cf3
+                startFuture.complete()
             }
-            cf2
+            else {
+                startFuture.fail( ar.cause() )
+            }
         }
 
     }
