@@ -20,13 +20,13 @@ class Init : AbstractVerticle() {
 
         // Users
         batch.add( """
-            create table user (
+            create table users (
               name varchar(255) primary key,
               password varchar(255)
             )
             """ )
         batch.add( """
-            insert into user values
+            insert into users values
               ( 'bob', '12345' ),
               ( 'alice', 'abcde' )
             """)
@@ -41,7 +41,7 @@ class Init : AbstractVerticle() {
                 id integer,
                 model varchar(255),
                 primary key( id ),
-                foreign key( owner ) references user(name)
+                foreign key( owner ) references users(name)
             )
         """.trimIndent())
         batch.add( """
