@@ -57,6 +57,7 @@ dependencies {
     compile "io.vertx:vertx-lang-kotlin:$vertx_version"
     compile "io.vertx:vertx-sql-common:$vertx_version"
     compile "io.vertx:vertx-jdbc-client:$vertx_version"
+    compile "io.vertx:vertx-rx-java2:$vertx_version"
     compile "com.markodevcic.kvalidation:KValidation:1.0.0"
     compile "org.hsqldb:hsqldb:2.3.4"
     testCompile "io.vertx:vertx-junit5:$vertx_version"
