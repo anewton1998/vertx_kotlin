@@ -44,6 +44,15 @@ class Init : AbstractVerticle() {
                 foreign key( owner ) references user(name)
             )
         """.trimIndent())
+        batch.add( """
+            insert into devices values
+              ( 'bob', next value for device_id_seq, 'samsung' ),
+              ( 'bob', next value for device_id_seq, 'iphone' ),
+              ( 'bob', next value for device_id_seq, 'wince' ),
+              ( 'alice', next value for device_id_seq, 'wince' ),
+              ( 'alice', next value for device_id_seq, 'nexus' ),
+              ( 'alice', next value for device_id_seq, 'pixel' )
+        """.trimIndent())
 
         // Cats
         batch.add( """
