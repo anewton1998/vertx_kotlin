@@ -3,6 +3,17 @@ package com.rcode3.vertx_kotlin
 
 //
 //
+// Configuration constants
+//
+//
+
+/**
+ * Name of JSON object containing database configuration
+ */
+const val CONFIG_DB = "db"
+
+//
+//
 // Event Bus Addresses that don't belong anywhere else
 //
 //
@@ -33,9 +44,10 @@ const val NOT_IMPLEMENTED = 503
  * Header name for database actions. The value for the action should be one of:
  * - [ENTITY_COUNT]
  * - [ENTITY_GET]
- * - [ENTITY_SAVE]
+ * - [ENTITY_NEW]
  * - [ENTITY_DELETE]
  * - [ENTITY_ALL]
+ * - [ENTITY_UPDATE]
  */
 const val DB_ACTION = "db.action"
 
@@ -62,9 +74,14 @@ const val ENTITY_COUNT = "entity.count"
 const val ENTITY_GET = "entity.get"
 
 /**
- * Save the entity.
+ * Save a new entity.
  */
-const val ENTITY_SAVE = "entity.save"
+const val ENTITY_NEW = "entity.new"
+
+/**
+ * Update an existing entity.
+ */
+const val ENTITY_UPDATE = "entity.update"
 
 /**
  * Delete the entity by its primary key.

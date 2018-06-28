@@ -1,6 +1,7 @@
 // Copyright(C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.db
 
+import com.rcode3.vertx_kotlin.CONFIG_DB
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.ext.jdbc.JDBCClient
@@ -10,7 +11,7 @@ class Init : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>) {
 
-        val client = JDBCClient.createShared( vertx, config()[ "db" ] )
+        val client = JDBCClient.createShared( vertx, config()[ CONFIG_DB ] )
 
         var batch = mutableListOf<String>()
 

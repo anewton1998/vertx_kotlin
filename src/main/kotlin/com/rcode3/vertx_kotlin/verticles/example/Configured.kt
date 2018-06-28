@@ -1,6 +1,7 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.example
 
+import com.rcode3.vertx_kotlin.CONFIG_DB
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.JsonObject
@@ -17,7 +18,7 @@ class Configured : AbstractVerticle() {
 
         logger.info( "Configuration Example Verticle" )
 
-        val db : JsonObject? = config().getJsonObject( "db" )
+        val db : JsonObject? = config().getJsonObject( CONFIG_DB )
 
         db?.let{
             logger.info( "url: ${db.getString( "url" )}")
