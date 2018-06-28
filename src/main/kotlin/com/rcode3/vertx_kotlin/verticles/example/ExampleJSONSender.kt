@@ -1,8 +1,6 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.example
 
-import com.rcode3.vertx_kotlin.EXAMPLE_JSON_ADDR
-import com.rcode3.vertx_kotlin.JSON_PROP_COUNT
 import com.rcode3.vertx_kotlin.PERIODIC_TIMER_ADDR
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
@@ -39,7 +37,7 @@ class ExampleJSONSender : AbstractVerticle() {
                 )
             }
 
-            eb.send<String>( EXAMPLE_JSON_ADDR, json.toString() ) { ar ->
+            eb.send<String>(EXAMPLE_JSON_ADDR, json.toString() ) { ar ->
 
                 // get the reply from the sending
                 logger.info{ "received reply ${ar.result().body()}" }

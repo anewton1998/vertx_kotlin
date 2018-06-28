@@ -1,8 +1,6 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.example
 
-import com.rcode3.vertx_kotlin.EXAMPLE_JSON_ADDR
-import com.rcode3.vertx_kotlin.JSON_PROP_COUNT
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
@@ -30,12 +28,12 @@ object ExampleJSONReceiverTest {
     @Test
     fun testJsonProp( vertx: Vertx, testContext: VertxTestContext ) {
 
-        val json = JsonObject().putNull( JSON_PROP_COUNT )
-        vertx.eventBus().send<String>( EXAMPLE_JSON_ADDR, json.toString(),
+        val json = JsonObject().putNull(JSON_PROP_COUNT)
+        vertx.eventBus().send<String>(EXAMPLE_JSON_ADDR, json.toString(),
                 testContext.succeeding{
                     testContext.verify{
                         val jsonResult = JsonObject( it.body() )
-                        assertThat( jsonResult.getInteger( JSON_PROP_COUNT) ).isInstanceOf( Integer::class.java )
+                        assertThat( jsonResult.getInteger(JSON_PROP_COUNT) ).isInstanceOf( Integer::class.java )
                         testContext.completeNow()
                     }
                 } )

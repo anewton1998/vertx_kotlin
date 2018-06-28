@@ -1,8 +1,6 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.example
 
-import com.rcode3.vertx_kotlin.EXAMPLE_JSON_ADDR
-import com.rcode3.vertx_kotlin.JSON_PROP_COUNT
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.json.JsonObject
@@ -43,7 +41,7 @@ class ExampleJSONReceiver : AbstractVerticle() {
         val eb = vertx.eventBus()
 
         // register a consumer that handles strings
-        eb.consumer<String>( EXAMPLE_JSON_ADDR ) { message ->
+        eb.consumer<String>(EXAMPLE_JSON_ADDR) { message ->
 
             // the message is JSON. make the JSON usable
             val json = JsonObject( message.body() )
@@ -55,7 +53,7 @@ class ExampleJSONReceiver : AbstractVerticle() {
                 if( it.succeeded() ) {
 
                     // change the JSON and send it back as a reply
-                    message.reply( json.put( JSON_PROP_COUNT, it.result() ).toString() )
+                    message.reply( json.put(JSON_PROP_COUNT, it.result() ).toString() )
                 }
 
                 else {
@@ -67,3 +65,12 @@ class ExampleJSONReceiver : AbstractVerticle() {
         startFuture.complete()
     }
 }
+
+/**
+ * Event bus address for the Example JSON Verticles
+ */
+const val EXAMPLE_JSON_ADDR = "example.json"
+/**
+ * JSON property name for count
+ */
+const val JSON_PROP_COUNT = "count"

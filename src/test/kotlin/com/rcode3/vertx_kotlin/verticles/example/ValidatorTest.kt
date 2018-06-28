@@ -1,7 +1,6 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.example
 
-import com.rcode3.vertx_kotlin.VALIDATOR_ADDR
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
@@ -65,7 +64,7 @@ object ValidatorTest {
 
         val checkpoint = testContext.checkpoint( 2 )
 
-        vertx.eventBus().send<JsonObject>( VALIDATOR_ADDR, json,
+        vertx.eventBus().send<JsonObject>(VALIDATOR_ADDR, json,
                 testContext.succeeding{
                     testContext.verify {
                         assertThat( it.headers()[ "validated" ] )
@@ -77,7 +76,7 @@ object ValidatorTest {
 
         json.put( "age", 16 )
 
-        vertx.eventBus().send<JsonObject>( VALIDATOR_ADDR, json,
+        vertx.eventBus().send<JsonObject>(VALIDATOR_ADDR, json,
                 testContext.succeeding{
                     testContext.verify {
                         assertThat( it.headers()[ "error" ] )

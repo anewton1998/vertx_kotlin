@@ -3,14 +3,11 @@ package com.rcode3.vertx_kotlin.verticles.example
 
 import com.markodevcic.kvalidation.ValidatorBase
 import com.markodevcic.kvalidation.rules
-import com.rcode3.vertx_kotlin.VALIDATOR_ADDR
 import io.vertx.core.*
 import io.vertx.core.eventbus.Message
-import io.vertx.core.json.Json
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.eventbus.DeliveryOptions
 import io.vertx.kotlin.core.json.array
-import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 
@@ -27,7 +24,7 @@ class Validator : AbstractVerticle() {
         // get the event bus
         val eb = vertx.eventBus()
 
-        eb.consumer<JsonObject>( VALIDATOR_ADDR ) { message ->
+        eb.consumer<JsonObject>(VALIDATOR_ADDR) { message ->
 
             val result = validateUser( message.body() )
             val deliveryOptions = DeliveryOptions()
@@ -89,7 +86,7 @@ class Validator : AbstractVerticle() {
         }
 
         fun validateUser( vertx: Vertx, user : JsonObject, handler: Handler<AsyncResult<Message<JsonObject>>>) {
-            vertx.eventBus().send<JsonObject>( VALIDATOR_ADDR, user, handler )
+            vertx.eventBus().send<JsonObject>(VALIDATOR_ADDR, user, handler )
         }
 
     }
@@ -97,3 +94,8 @@ class Validator : AbstractVerticle() {
     class JsonValidator( jsonObject: JsonObject ) : ValidatorBase<JsonObject>( jsonObject ) {}
 
 }
+
+/**
+ * Address for [com.rcode3.vertx_kotlin.verticles.example.Validator]
+ */
+const val VALIDATOR_ADDR = "validator"
