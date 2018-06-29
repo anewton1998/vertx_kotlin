@@ -6,6 +6,7 @@ import com.opentable.db.postgres.embedded.EmbeddedPostgres
 object InitPg {
     var pgStarted = false
     var pg : EmbeddedPostgres? = null
+    var port = 0
 
     var batch = mutableListOf<String>()
 
@@ -27,7 +28,8 @@ object InitPg {
         batch.add( """
             insert into users values
               ( 'bob', '12345' ),
-              ( 'alice', 'abcde' )
+              ( 'alice', 'abcde' ),
+              ( 'julien', 'xyz' )
             """)
 
         // Devices
@@ -67,9 +69,11 @@ object InitPg {
         """.trimIndent())
     }
 
-    fun startPg() {
+    fun startPg() : Int {
         if( !pgStarted ) {
             pg = EmbeddedPostgres.start()
+            port = pg!!.getPort()
+            println( "Embedded Postgres started on port ${port}" )
             pgStarted = true
         }
         pg?.let{
@@ -82,5 +86,6 @@ object InitPg {
             stmt.executeBatch()
             connection.commit()
         }
+        return port
     }
 }
