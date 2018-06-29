@@ -2,6 +2,7 @@ package com.rcode3.vertx_kotlin
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -10,6 +11,7 @@ object TestEmbeddedPg {
 
     @DisplayName( "Setting up PostgreSQL" )
     @Test
+    @Disabled
     fun prepare() {
         val pg = EmbeddedPostgres.start()
         val ds = pg.getPostgresDatabase()

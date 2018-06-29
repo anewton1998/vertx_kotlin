@@ -11,6 +11,7 @@ class Init : AbstractVerticle() {
 
     override fun start(startFuture: Future<Void>) {
 
+
         val client = JDBCClient.createShared( vertx, config()[ CONFIG_DB ] )
 
         var batch = mutableListOf<String>()
