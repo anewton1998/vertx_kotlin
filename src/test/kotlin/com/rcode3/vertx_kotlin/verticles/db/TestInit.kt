@@ -1,14 +1,13 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.verticles.db
 
-import com.opentable.db.postgres.embedded.EmbeddedPostgres
+import com.rcode3.vertx_kotlin.InitPg
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -21,12 +20,7 @@ object TestInit {
     @DisplayName( "Setup Embedded PostgreSQL")
     @JvmStatic
     fun prepare( vertx: Vertx, testContext: VertxTestContext ) {
-        val pg = EmbeddedPostgres.start()
-        val ds = pg.getPostgresDatabase()
-        println( "datasource = $ds" )
-        val connection = ds.getConnection()
-        connection.createStatement().execute( "create table users ( name varchar(25) ) ")
-        connection.close()
+        InitPg.startPg()
         testContext.completeNow()
     }
 
