@@ -5,10 +5,12 @@ import com.opentable.db.postgres.embedded.EmbeddedPostgres
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
+import javax.sql.DataSource
 
 object InitPg {
     var pgStarted = false
     var pg : EmbeddedPostgres? = null
+    var dataSource : DataSource? = null
     var dbConfig : JsonObject = JsonObject()
 
     var batch = mutableListOf<String>()
@@ -65,11 +67,11 @@ object InitPg {
                 type varchar(50)
             )
         """.trimIndent())
-        batch.add( """
+        /*batch.add( """
             insert into cats values
                 ( 'mitzy', 'calico' ),
                 ( 'patches', 'tabby' )
-        """.trimIndent())
+        """.trimIndent())*/
     }
 
     fun startPg() : JsonObject {
@@ -89,6 +91,7 @@ object InitPg {
             }
         }
         pg?.let{
+            dataSource = pg!!.postgresDatabase
             val connection = pg!!.getPostgresDatabase().getConnection()
             connection.autoCommit = false
             val stmt = connection.createStatement()
