@@ -8,6 +8,7 @@ import io.vertx.reactivex.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -33,9 +34,15 @@ object CatsTest {
         val testContext = VertxTestContext()
         val vertx = Vertx.vertx()
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
-        Cats().all( client.rxGetConnection() ).doAfterTerminate {
-            client.close()
-            testContext.completeNow()
-        }
+        Cats().all( client.rxGetConnection() )
+            .doAfterTerminate {
+              client.close()
+              testContext.completeNow()
+            }
+                .subscribe { jsonArray ->
+                    println( jsonArray )
+                    assertThat( jsonArray.isEmpty ).isFalse()
+                }
+
     }
 }

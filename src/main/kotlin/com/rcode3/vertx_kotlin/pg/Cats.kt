@@ -10,22 +10,24 @@ import io.vertx.kotlin.core.json.obj
 class Cats {
 
     fun all( connection: Single<PgConnection>) : Single<JsonArray> {
-        val retval = JsonArray()
-        connection.flatMap { conn ->
+        return connection.flatMap { conn ->
             conn.rxQuery( "select name, type from cats" )
                     .doAfterTerminate { conn.close() }
-        }.subscribe{ rowset ->
-            for( row in rowset ) {
-                val cat = json {
-                    obj(
-                        "name" to row.getString( 0 ),
-                        "type" to row.getString( 1 )
-                    )
-                }
-                retval.add( cat )
-            }
         }
-        return Single.just( retval )
+                .map { rowset ->
+                    val retval = JsonArray()
+                    for( row in rowset ) {
+                        val cat = json {
+                            obj(
+                                    "name" to row.getString( 0 ),
+                                    "type" to row.getString( 1 )
+                            )
+                        }
+                        retval.add( cat )
+                        println( "found cat $cat")
+                    }
+                    retval
+                }
     }
 
 }
