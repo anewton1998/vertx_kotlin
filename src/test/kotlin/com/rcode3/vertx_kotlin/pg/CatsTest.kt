@@ -33,9 +33,9 @@ object CatsTest {
         val testContext = VertxTestContext()
         val vertx = Vertx.vertx()
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
-        Cats().all( client.rxGetConnection().doAfterTerminate {
+        Cats().all( client.rxGetConnection() ).doAfterTerminate {
             client.close()
             testContext.completeNow()
-        } )
+        }
     }
 }

@@ -9,7 +9,7 @@ import io.vertx.kotlin.core.json.obj
 
 class Cats {
 
-    fun all( connection: Single<PgConnection>) : JsonArray {
+    fun all( connection: Single<PgConnection>) : Single<JsonArray> {
         val retval = JsonArray()
         connection.flatMap { conn ->
             conn.rxQuery( "select name, type from cats" )
@@ -25,7 +25,7 @@ class Cats {
                 retval.add( cat )
             }
         }
-        return retval
+        return Single.just( retval )
     }
 
 }
