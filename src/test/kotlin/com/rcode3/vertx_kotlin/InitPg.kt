@@ -2,11 +2,14 @@
 package com.rcode3.vertx_kotlin
 
 import com.opentable.db.postgres.embedded.EmbeddedPostgres
+import io.vertx.core.json.JsonObject
+import io.vertx.kotlin.core.json.json
+import io.vertx.kotlin.core.json.obj
 
 object InitPg {
     var pgStarted = false
     var pg : EmbeddedPostgres? = null
-    var port = 0
+    var dbConfig : JsonObject = JsonObject()
 
     var batch = mutableListOf<String>()
 
@@ -69,12 +72,21 @@ object InitPg {
         """.trimIndent())
     }
 
-    fun startPg() : Int {
+    fun startPg() : JsonObject {
         if( !pgStarted ) {
             pg = EmbeddedPostgres.start()
-            port = pg!!.getPort()
-            println( "Embedded Postgres started on port ${port}" )
+            println( "Embedded Postgres started on port ${pg!!.getPort()}" )
             pgStarted = true
+            dbConfig = json{
+                obj(
+                        "port" to pg!!.getPort(),
+                        "host" to "localhost",
+                        "database" to "postgres",
+                        "user" to "postgres",
+                        "password" to "secret",
+                        "maxSize" to 5
+                )
+            }
         }
         pg?.let{
             val connection = pg!!.getPostgresDatabase().getConnection()
@@ -86,6 +98,6 @@ object InitPg {
             stmt.executeBatch()
             connection.commit()
         }
-        return port
+        return dbConfig
     }
 }
