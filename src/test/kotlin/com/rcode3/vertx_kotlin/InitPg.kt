@@ -23,35 +23,35 @@ object InitPg {
             CREATE SCHEMA public
         """)
 
-        // Users
+        // Person
         batch.add( """
-            create table users (
+            create table person (
               name varchar(255) primary key,
               password varchar(255)
             )
             """ )
         batch.add( """
-            insert into users values
+            insert into person values
               ( 'bob', '12345' ),
               ( 'alice', 'abcde' ),
               ( 'julien', 'xyz' )
             """)
 
-        // Devices
+        // Device
         batch.add( """
             create sequence device_id_seq
         """.trimIndent())
         batch.add( """
-            create table devices (
+            create table device (
                 owner varchar(255),
                 id integer,
                 model varchar(255),
                 primary key( id ),
-                foreign key( owner ) references users(name)
+                foreign key( owner ) references person(name)
             )
         """.trimIndent())
         batch.add( """
-            insert into devices values
+            insert into device values
               ( 'bob', nextval('device_id_seq'), 'samsung' ),
               ( 'bob', nextval('device_id_seq'), 'iphone' ),
               ( 'bob', nextval('device_id_seq'), 'wince' ),
@@ -60,18 +60,13 @@ object InitPg {
               ( 'alice', nextval('device_id_seq'), 'pixel' )
         """.trimIndent())
 
-        // Cats
+        // Cat
         batch.add( """
-            create table cats (
+            create table cat (
                 name varchar(255) primary key,
                 type varchar(50)
             )
         """.trimIndent())
-        /*batch.add( """
-            insert into cats values
-                ( 'mitzy', 'calico' ),
-                ( 'patches', 'tabby' )
-        """.trimIndent())*/
     }
 
     fun startPg() : JsonObject {

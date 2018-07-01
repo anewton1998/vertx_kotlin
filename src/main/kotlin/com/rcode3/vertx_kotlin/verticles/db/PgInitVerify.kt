@@ -16,7 +16,7 @@ class PgInitVerify : AbstractVerticle() {
         var client = PgClient.pool(vertx, options)
 
         // A simple query
-        client.query("SELECT * FROM users WHERE name='julien'") { ar ->
+        client.query("SELECT * FROM person WHERE name='julien'") { ar ->
             if (ar.succeeded()) {
                 var result = ar.result()
                 println("Got ${result.size()} rows ")

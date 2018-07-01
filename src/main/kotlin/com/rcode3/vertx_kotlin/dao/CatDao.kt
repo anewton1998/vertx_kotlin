@@ -1,5 +1,5 @@
 //Copyright (C) 2018 Andrew Newton
-package com.rcode3.vertx_kotlin.pg
+package com.rcode3.vertx_kotlin.dao
 
 import io.reactiverse.reactivex.pgclient.PgConnection
 import io.reactiverse.reactivex.pgclient.Row
@@ -10,11 +10,23 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 
-class CatsDao {
+class CatDao {
 
-    val selectAll = "select name, type from cats"
-    val selectAllLimited = "select name, type from cats limit $1"
-    val selectCount = "select count(*) from cats"
+    companion object {
+        const val TABLE_NAME = "cat"
+    }
+
+    enum class Column(val columnName : String ){
+        NAME( "name" ),
+        TYPE( "type" );
+        override fun toString() : String {
+            return columnName
+        }
+    }
+
+    val selectAll = "select ${Column.NAME}, ${Column.TYPE} from $TABLE_NAME"
+    val selectAllLimited = "select ${Column.NAME}, ${Column.TYPE} from $TABLE_NAME limit $1"
+    val selectCount = "select count(*) from $TABLE_NAME"
 
     fun all( connection: Single<PgConnection>) : Single<JsonArray> {
         return connection.flatMap { conn ->
