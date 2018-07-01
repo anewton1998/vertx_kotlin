@@ -62,6 +62,7 @@ object CatDaoTest {
                     client.close()
                     testContext.completeNow()
                 }
+                .doOnError { throw it }
                 .subscribe { jsonArray ->
                     assertThat( jsonArray.size() ).isEqualTo( 2 )
                     assertThat( jsonArray ).contains( json{ obj( "name" to "mitzy",
@@ -83,6 +84,7 @@ object CatDaoTest {
                     client.close()
                     testContext.completeNow()
                 }
+                .doOnError { throw it }
                 .subscribe { jsonArray ->
                     assertThat( jsonArray.size() ).isEqualTo( 1 )
                 }
@@ -100,6 +102,7 @@ object CatDaoTest {
                     client.close()
                     testContext.completeNow()
                 }
+                .doOnError { throw it }
                 .subscribe { count ->
                     assertThat( count ).isEqualTo( 2 )
                 }
