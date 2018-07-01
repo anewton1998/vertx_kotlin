@@ -90,4 +90,21 @@ object CatsDaoTest {
                     assertThat( jsonArray.size() ).isEqualTo( 1 )
                 }
     }
+
+    @DisplayName( "Count cats" )
+    @Test
+    fun testCount() {
+        dbSetupTracker.skipNextLaunch()
+        val testContext = VertxTestContext()
+        val vertx = Vertx.vertx()
+        val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
+        CatsDao().count( client.rxGetConnection() )
+                .doFinally {
+                    client.close()
+                    testContext.completeNow()
+                }
+                .subscribe { count ->
+                    assertThat( count ).isEqualTo( 2 )
+                }
+    }
 }

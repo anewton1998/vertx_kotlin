@@ -5,7 +5,6 @@ import io.reactiverse.reactivex.pgclient.PgConnection
 import io.reactiverse.reactivex.pgclient.Row
 import io.reactiverse.reactivex.pgclient.Tuple
 import io.reactivex.Single
-import io.reactivex.SingleSource
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.json.json
@@ -15,6 +14,7 @@ class CatsDao {
 
     val selectAll = "select name, type from cats"
     val selectAllLimited = "select name, type from cats limit $1"
+    val selectCount = "select count(*) from cats"
 
     fun all( connection: Single<PgConnection>) : Single<JsonArray> {
         return connection.flatMap { conn ->
@@ -44,6 +44,21 @@ class CatsDao {
                     }
                     .doFinally { conn.close() }
         }
+    }
+
+    fun count( connection: Single<PgConnection> ) : Single<Int> {
+        return connection.flatMap { conn ->
+            conn.rxQuery( selectCount )
+                    .map { rowset ->
+                        var retval = 0
+                        for( row in rowset ) {
+                            retval = row.getInteger( 0 )
+                        }
+                        retval
+                    }
+                    .doFinally { conn.close() }
+        }
+
     }
 
     private fun jsonObject(row: Row): JsonObject {
