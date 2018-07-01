@@ -42,7 +42,7 @@ object CatDaoTest {
         {
             deleteAllFrom( CatDao.TABLE_NAME )
             insertInto( CatDao.TABLE_NAME ) {
-                columns( CatDao.Column.NAME.columnName, CatDao.Column.TYPE.columnName )
+                columns( "name", "type" )
                 values( "mitzy", "calico")
                 values( "patches", "tabby" )
             }

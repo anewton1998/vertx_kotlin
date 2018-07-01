@@ -16,16 +16,8 @@ class CatDao {
         const val TABLE_NAME = "cat"
     }
 
-    enum class Column(val columnName : String ){
-        NAME( "name" ),
-        TYPE( "type" );
-        override fun toString() : String {
-            return columnName
-        }
-    }
-
-    val selectAll = "select ${Column.NAME}, ${Column.TYPE} from $TABLE_NAME"
-    val selectAllLimited = "select ${Column.NAME}, ${Column.TYPE} from $TABLE_NAME limit $1"
+    val selectAll = "select * from $TABLE_NAME"
+    val selectAllLimited = "select * from $TABLE_NAME limit $1"
     val selectCount = "select count(*) from $TABLE_NAME"
 
     fun all( connection: Single<PgConnection>) : Single<JsonArray> {
@@ -34,7 +26,10 @@ class CatDao {
                     .map{ rowset ->
                         val retval = JsonArray()
                         for( row in rowset ) {
-                            val cat = jsonObject(row)
+                            val cat = JsonObject()
+                            rowset.columnsNames().forEach {
+                                cat.put( it, row.getValue( it ) )
+                            }
                             retval.add( cat )
                         }
                         retval
@@ -49,7 +44,10 @@ class CatDao {
                     .map { rowset ->
                         val retval = JsonArray()
                         for( row in rowset ) {
-                            val cat = jsonObject(row)
+                            val cat = JsonObject()
+                            rowset.columnsNames().forEach {
+                                cat.put( it, row.getValue( it ) )
+                            }
                             retval.add( cat )
                         }
                         retval
@@ -72,15 +70,4 @@ class CatDao {
         }
 
     }
-
-    private fun jsonObject(row: Row): JsonObject {
-        val cat = json {
-            obj(
-                    "name" to row.getString(0),
-                    "type" to row.getString(1)
-            )
-        }
-        return cat
-    }
-
 }
