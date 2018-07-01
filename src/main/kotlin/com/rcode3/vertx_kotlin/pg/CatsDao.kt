@@ -25,7 +25,6 @@ class CatsDao {
                     for( row in rowset ) {
                         val cat = jsonObject(row)
                         retval.add( cat )
-                        println( "found cat $cat")
                     }
                     retval
                 }
@@ -41,7 +40,6 @@ class CatsDao {
                     for( row in rowset ) {
                         val cat = jsonObject(row)
                         retval.add( cat )
-                        println( "found cat $cat")
                     }
                     retval
                 }

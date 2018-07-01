@@ -11,7 +11,10 @@ import io.vertx.reactivex.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import io.vertx.kotlin.core.json.json
+import io.vertx.kotlin.core.json.obj
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -51,6 +54,7 @@ object CatsDaoTest {
     @DisplayName( "Get all cats" )
     @Test
     fun testAll() {
+        dbSetupTracker.skipNextLaunch()
         val testContext = VertxTestContext()
         val vertx = Vertx.vertx()
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
@@ -60,8 +64,12 @@ object CatsDaoTest {
               testContext.completeNow()
             }
                 .subscribe { jsonArray ->
-                    println( jsonArray )
-                    assertThat( jsonArray.isEmpty ).isFalse()
+                    assertThat( jsonArray.size() ).isEqualTo( 2 )
+                    assertThat( jsonArray )
+                            .contains( json{ obj( "name" to "mitzy",
+                                                  "type" to "calico" ) },
+                                       json{ obj( "name" to "patches",
+                                                  "type" to "calico") } )
                 }
 
     }
