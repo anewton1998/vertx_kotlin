@@ -1,7 +1,6 @@
 // Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.pg
 
-import com.ninja_squad.dbsetup.DbSetup
 import com.ninja_squad.dbsetup.DbSetupTracker
 import com.ninja_squad.dbsetup_kotlin.dbSetup
 import com.ninja_squad.dbsetup_kotlin.launchWith
@@ -19,9 +18,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-@DisplayName( "Cats DB Tests" )
+@DisplayName( "CatsDao DB Tests" )
 @ExtendWith( VertxExtension::class )
-object CatsTest {
+object CatsDaoTest {
 
     val dbSetupTracker = DbSetupTracker()
     var dbConfig = JsonObject()
@@ -55,7 +54,7 @@ object CatsTest {
         val testContext = VertxTestContext()
         val vertx = Vertx.vertx()
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
-        Cats().all( client.rxGetConnection() )
+        CatsDao().all( client.rxGetConnection() )
             .doAfterTerminate {
               client.close()
               testContext.completeNow()
