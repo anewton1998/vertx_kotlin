@@ -5,6 +5,7 @@ import io.reactiverse.reactivex.pgclient.PgConnection
 import io.reactiverse.reactivex.pgclient.Row
 import io.reactiverse.reactivex.pgclient.Tuple
 import io.reactivex.Single
+import io.reactivex.SingleSource
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.json.json
@@ -13,36 +14,36 @@ import io.vertx.kotlin.core.json.obj
 class CatsDao {
 
     val selectAll = "select name, type from cats"
-    val selectAllLimited = "select name, type from cats limit ?"
+    val selectAllLimited = "select name, type from cats limit $1"
 
     fun all( connection: Single<PgConnection>) : Single<JsonArray> {
         return connection.flatMap { conn ->
             conn.rxQuery( selectAll )
-                    .doAfterTerminate { conn.close() }
-        }
-                .map { rowset ->
-                    val retval = JsonArray()
-                    for( row in rowset ) {
-                        val cat = jsonObject(row)
-                        retval.add( cat )
+                    .map{ rowset ->
+                        val retval = JsonArray()
+                        for( row in rowset ) {
+                            val cat = jsonObject(row)
+                            retval.add( cat )
+                        }
+                        retval
                     }
-                    retval
-                }
+                    .doFinally { conn.close() }
+        }
     }
 
-    fun allLimited(connection: Single<PgConnection>, limit: Int ) : Single<JsonArray> {
+    fun allLimited(connection: Single<PgConnection>, limit: Long ) : Single<JsonArray> {
         return connection.flatMap { conn ->
             conn.rxPreparedQuery( selectAllLimited, Tuple.of( limit ) )
-                    .doAfterTerminate { conn.close() }
-        }
-                .map { rowset ->
-                    val retval = JsonArray()
-                    for( row in rowset ) {
-                        val cat = jsonObject(row)
-                        retval.add( cat )
+                    .map { rowset ->
+                        val retval = JsonArray()
+                        for( row in rowset ) {
+                            val cat = jsonObject(row)
+                            retval.add( cat )
+                        }
+                        retval
                     }
-                    retval
-                }
+                    .doFinally { conn.close() }
+        }
     }
 
     private fun jsonObject(row: Row): JsonObject {

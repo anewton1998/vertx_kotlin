@@ -7,10 +7,12 @@ import com.ninja_squad.dbsetup_kotlin.launchWith
 import com.rcode3.vertx_kotlin.InitPg
 import io.reactiverse.pgclient.PgPoolOptions
 import io.reactiverse.reactivex.pgclient.PgClient
+import io.vertx.core.json.JsonArray
 import io.vertx.reactivex.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import io.vertx.kotlin.core.json.JsonArray
 import io.vertx.kotlin.core.json.json
 import io.vertx.kotlin.core.json.obj
 import org.assertj.core.api.Assertions.assertThat
@@ -59,18 +61,33 @@ object CatsDaoTest {
         val vertx = Vertx.vertx()
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
         CatsDao().all( client.rxGetConnection() )
-            .doAfterTerminate {
-              client.close()
-              testContext.completeNow()
-            }
+                .doFinally {
+                    client.close()
+                    testContext.completeNow()
+                }
                 .subscribe { jsonArray ->
                     assertThat( jsonArray.size() ).isEqualTo( 2 )
-                    assertThat( jsonArray )
-                            .contains( json{ obj( "name" to "mitzy",
-                                                  "type" to "calico" ) },
-                                       json{ obj( "name" to "patches",
-                                                  "type" to "calico") } )
+                    assertThat( jsonArray ).contains( json{ obj( "name" to "mitzy",
+                                                                 "type" to "calico" )},
+                                                      json{ obj( "name" to "patches",
+                                                                 "type" to "tabby" )})
                 }
+    }
 
+    @DisplayName( "Get some cats" )
+    @Test
+    fun testAllLimited() {
+        dbSetupTracker.skipNextLaunch()
+        val testContext = VertxTestContext()
+        val vertx = Vertx.vertx()
+        val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
+        CatsDao().allLimited( client.rxGetConnection(), 1 )
+                .doFinally {
+                    client.close()
+                    testContext.completeNow()
+                }
+                .subscribe { jsonArray ->
+                    assertThat( jsonArray.size() ).isEqualTo( 1 )
+                }
     }
 }
