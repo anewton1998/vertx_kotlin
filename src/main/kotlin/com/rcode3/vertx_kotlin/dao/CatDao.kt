@@ -1,14 +1,11 @@
 //Copyright (C) 2018 Andrew Newton
 package com.rcode3.vertx_kotlin.dao
 
+import com.rcode3.vertx_kotlin.model.Cat
 import io.reactiverse.reactivex.pgclient.PgConnection
 import io.reactiverse.reactivex.pgclient.Row
 import io.reactiverse.reactivex.pgclient.Tuple
 import io.reactivex.Single
-import io.vertx.core.json.JsonArray
-import io.vertx.core.json.JsonObject
-import io.vertx.kotlin.core.json.json
-import io.vertx.kotlin.core.json.obj
 
 class CatDao {
 
@@ -16,21 +13,23 @@ class CatDao {
         const val TABLE_NAME = "cat"
     }
 
-    val selectAll = "select * from $TABLE_NAME"
-    val selectAllLimited = "select * from $TABLE_NAME limit $1"
+    enum class Column( val cn : String, val pos : Int ) {
+        NAME( "name", 0 ),
+        TYPE( "type", 1 )
+    }
+
+
+    val selectAll = "select ${Column.NAME.cn}, ${Column.TYPE.cn} from $TABLE_NAME"
+    val selectAllLimited = "select ${Column.NAME.cn}, ${Column.TYPE.cn} from $TABLE_NAME limit $1"
     val selectCount = "select count(*) from $TABLE_NAME"
 
-    fun all( connection: Single<PgConnection>) : Single<JsonArray> {
+    fun all( connection: Single<PgConnection>) : Single<List<Cat>> {
         return connection.flatMap { conn ->
             conn.rxQuery( selectAll )
                     .map{ rowset ->
-                        val retval = JsonArray()
+                        val retval = ArrayList<Cat>( rowset.size() )
                         for( row in rowset ) {
-                            val cat = JsonObject()
-                            rowset.columnsNames().forEach {
-                                cat.put( it, row.getValue( it ) )
-                            }
-                            retval.add( cat )
+                           retval.add( mapRowToCat(row) )
                         }
                         retval
                     }
@@ -38,23 +37,26 @@ class CatDao {
         }
     }
 
-    fun allLimited(connection: Single<PgConnection>, limit: Long ) : Single<JsonArray> {
+    fun allLimited(connection: Single<PgConnection>, limit: Long ) : Single<List<Cat>> {
         return connection.flatMap { conn ->
             conn.rxPreparedQuery( selectAllLimited, Tuple.of( limit ) )
                     .map { rowset ->
-                        val retval = JsonArray()
+                        val retval = ArrayList<Cat>( rowset.size() )
                         for( row in rowset ) {
-                            val cat = JsonObject()
-                            rowset.columnsNames().forEach {
-                                cat.put( it, row.getValue( it ) )
-                            }
-                            retval.add( cat )
+                            retval.add( mapRowToCat( row ) )
                         }
                         retval
                     }
                     .doFinally { conn.close() }
         }
     }
+
+    private fun mapRowToCat(row: Row): Cat {
+        return Cat(name = row.getString(Column.NAME.pos),
+                type = row.getString(Column.TYPE.pos)
+        )
+    }
+
 
     fun count( connection: Single<PgConnection> ) : Single<Int> {
         return connection.flatMap { conn ->

@@ -5,14 +5,13 @@ import com.ninja_squad.dbsetup.DbSetupTracker
 import com.ninja_squad.dbsetup_kotlin.dbSetup
 import com.ninja_squad.dbsetup_kotlin.launchWith
 import com.rcode3.vertx_kotlin.InitPg
+import com.rcode3.vertx_kotlin.model.Cat
 import io.reactiverse.pgclient.PgPoolOptions
 import io.reactiverse.reactivex.pgclient.PgClient
 import io.vertx.reactivex.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import io.vertx.kotlin.core.json.json
-import io.vertx.kotlin.core.json.obj
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +41,7 @@ object CatDaoTest {
         {
             deleteAllFrom( CatDao.TABLE_NAME )
             insertInto( CatDao.TABLE_NAME ) {
-                columns( "name", "type" )
+                columns( CatDao.Column.NAME.cn, CatDao.Column.TYPE.cn )
                 values( "mitzy", "calico")
                 values( "patches", "tabby" )
             }
@@ -52,23 +51,23 @@ object CatDaoTest {
 
     @DisplayName( "Get all cats" )
     @Test
-    fun testAll() {
+    fun testAll( vertx : io.vertx.reactivex.core.Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        val testContext = VertxTestContext()
-        val vertx = Vertx.vertx()
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
         CatDao().all( client.rxGetConnection() )
                 .doFinally {
                     client.close()
-                    testContext.completeNow()
                 }
                 .doOnError { throw it }
-                .subscribe { jsonArray ->
-                    assertThat( jsonArray.size() ).isEqualTo( 2 )
-                    assertThat( jsonArray ).contains( json{ obj( "name" to "mitzy",
-                                                                 "type" to "calico" )},
-                                                      json{ obj( "name" to "patches",
-                                                                 "type" to "tabby" )})
+                .subscribe { cats ->
+                    testContext.succeeding<Any> {
+                        testContext.verify {
+                            assertThat( cats.size ).isEqualTo( 2 )
+                            assertThat( cats ).contains( Cat( name="mitzy", type="calico"),
+                                    Cat( name="patches", type="tabby" ) )
+                            testContext.completeNow()
+                        }
+                    }
                 }
     }
 
@@ -82,11 +81,11 @@ object CatDaoTest {
         CatDao().allLimited( client.rxGetConnection(), 1 )
                 .doFinally {
                     client.close()
-                    testContext.completeNow()
                 }
                 .doOnError { throw it }
-                .subscribe { jsonArray ->
-                    assertThat( jsonArray.size() ).isEqualTo( 1 )
+                .subscribe { cats ->
+                    assertThat( cats.size ).isEqualTo( 1 )
+                    testContext.completeNow()
                 }
     }
 
@@ -100,11 +99,11 @@ object CatDaoTest {
         CatDao().count( client.rxGetConnection() )
                 .doFinally {
                     client.close()
-                    testContext.completeNow()
                 }
                 .doOnError { throw it }
                 .subscribe { count ->
                     assertThat( count ).isEqualTo( 2 )
+                    testContext.completeNow()
                 }
     }
 }

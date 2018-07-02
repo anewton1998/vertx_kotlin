@@ -20,7 +20,12 @@ class PgInitVerify : AbstractVerticle() {
             if (ar.succeeded()) {
                 var result = ar.result()
                 println("Got ${result.size()} rows ")
-                startFuture.complete()
+                if( result.size() == 0 ) {
+                    startFuture.fail( "database does not seem to be setup" )
+                }
+                else {
+                    startFuture.complete()
+                }
             } else {
                 println("Failure: ${ar.cause().message}")
                 startFuture.fail( ar.cause() )
