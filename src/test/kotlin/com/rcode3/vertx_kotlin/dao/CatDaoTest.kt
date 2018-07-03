@@ -8,6 +8,7 @@ import com.rcode3.vertx_kotlin.DaoTestVerticle
 import com.rcode3.vertx_kotlin.InitPg
 import com.rcode3.vertx_kotlin.model.Cat
 import io.reactiverse.reactivex.pgclient.PgPool
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.vertx.core.Vertx
@@ -56,19 +57,20 @@ object CatDaoTest {
     @Test
     fun testAll( vertx : Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        var cats : List<Cat> = emptyList()
         val test = { client : PgPool ->
             CatDao().all( client.rxGetConnection() )
                     .doFinally {
                         client.close()
                     }
                     .doOnError { throw it }
-                    .subscribe { it -> cats = it }
+                    .map { cats ->
+                        assertThat( cats.size ).isEqualTo( 2 )
+                        assertThat( cats ).contains( Cat( name="mitzy", type="calico"),
+                                Cat( name="patches", type="tabby" ) )
+                        Unit
+                    }
         }
         vertx.deployVerticle( DaoTestVerticle( dbConfig, test ), testContext.succeeding {
-            assertThat( cats.size ).isEqualTo( 2 )
-            assertThat( cats ).contains( Cat( name="mitzy", type="calico"),
-                    Cat( name="patches", type="tabby" ) )
             testContext.completeNow()
         } )
     }
@@ -77,17 +79,18 @@ object CatDaoTest {
     @Test
     fun testAllLimited( vertx: Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        var cats : List<Cat> = emptyList()
         val test = { client: PgPool ->
             CatDao().allLimited(client.rxGetConnection(), 1)
                     .doFinally {
                         client.close()
                     }
                     .doOnError { throw it }
-                    .subscribe { it -> cats = it }
+                    .map { cats ->
+                        assertThat(cats.size).isEqualTo(1)
+                        Unit
+                    }
         }
         vertx.deployVerticle( DaoTestVerticle( dbConfig, test ), testContext.succeeding {
-            assertThat(cats.size).isEqualTo(1)
             testContext.completeNow()
         } )
     }
@@ -96,17 +99,18 @@ object CatDaoTest {
     @Test
     fun testCount( vertx: Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        var count = -1
         val test = { client: PgPool ->
             CatDao().count(client.rxGetConnection())
                     .doFinally {
                         client.close()
                     }
                     .doOnError { throw it }
-                    .subscribe { it -> count = it }
+                    .map { count ->
+                        assertThat(count).isEqualTo(2)
+                        Unit
+                    }
         }
         vertx.deployVerticle( DaoTestVerticle( dbConfig, test ), testContext.succeeding {
-            assertThat(count).isEqualTo(2)
             testContext.completeNow()
         } )
     }
