@@ -4,18 +4,13 @@ package com.rcode3.vertx_kotlin.dao
 import com.ninja_squad.dbsetup.DbSetupTracker
 import com.ninja_squad.dbsetup_kotlin.dbSetup
 import com.ninja_squad.dbsetup_kotlin.launchWith
-import com.rcode3.vertx_kotlin.DaoTestVerticle
 import com.rcode3.vertx_kotlin.InitPg
+import com.rcode3.vertx_kotlin.getRxPgClient
 import com.rcode3.vertx_kotlin.model.Cat
-import io.reactiverse.reactivex.pgclient.PgPool
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.disposables.Disposable
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import io.vertx.reactivex.core.RxHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -57,61 +52,54 @@ object CatDaoTest {
     @Test
     fun testAll( vertx : Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        val test = { client : PgPool ->
-            CatDao().all( client.rxGetConnection() )
-                    .doFinally {
-                        client.close()
-                    }
-                    .doOnError { throw it }
-                    .map { cats ->
+        val client = getRxPgClient( vertx, dbConfig )
+        CatDao().all( client.rxGetConnection() )
+                .doFinally {
+                    client.close()
+                }
+                .subscribe { cats ->
+                    testContext.verify {
                         assertThat( cats.size ).isEqualTo( 2 )
                         assertThat( cats ).contains( Cat( name="mitzy", type="calico"),
                                 Cat( name="patches", type="tabby" ) )
-                        Unit
                     }
-        }
-        vertx.deployVerticle( DaoTestVerticle( dbConfig, test ), testContext.succeeding {
-            testContext.completeNow()
-        } )
+                    testContext.completeNow()
+                }
     }
 
     @DisplayName( "Get some cats" )
     @Test
     fun testAllLimited( vertx: Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        val test = { client: PgPool ->
-            CatDao().allLimited(client.rxGetConnection(), 1)
-                    .doFinally {
-                        client.close()
-                    }
-                    .doOnError { throw it }
-                    .map { cats ->
+        val client = getRxPgClient( vertx, dbConfig )
+        CatDao().allLimited(client.rxGetConnection(), 1)
+                .doFinally {
+                    client.close()
+                }
+                .doOnError { throw it }
+                .subscribe { cats ->
+                    testContext.verify {
                         assertThat(cats.size).isEqualTo(1)
-                        Unit
                     }
-        }
-        vertx.deployVerticle( DaoTestVerticle( dbConfig, test ), testContext.succeeding {
-            testContext.completeNow()
-        } )
+                    testContext.completeNow()
+                }
     }
 
     @DisplayName( "Count cats" )
     @Test
     fun testCount( vertx: Vertx, testContext: VertxTestContext ) {
         dbSetupTracker.skipNextLaunch()
-        val test = { client: PgPool ->
-            CatDao().count(client.rxGetConnection())
-                    .doFinally {
-                        client.close()
-                    }
-                    .doOnError { throw it }
-                    .map { count ->
+        val client = getRxPgClient( vertx, dbConfig )
+        CatDao().count(client.rxGetConnection())
+                .doFinally {
+                    client.close()
+                }
+                .doOnError { throw it }
+                .subscribe { count ->
+                    testContext.verify {
                         assertThat(count).isEqualTo(2)
-                        Unit
                     }
-        }
-        vertx.deployVerticle( DaoTestVerticle( dbConfig, test ), testContext.succeeding {
-            testContext.completeNow()
-        } )
+                    testContext.completeNow()
+                }
     }
 }

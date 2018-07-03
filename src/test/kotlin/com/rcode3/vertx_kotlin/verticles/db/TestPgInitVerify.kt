@@ -23,7 +23,7 @@ object TestPgInitVerify {
     @DisplayName( "Prepare the database" )
     @BeforeAll
     @JvmStatic
-    fun prepare( vertx: Vertx, testContext: VertxTestContext ) {
+    fun prepare( testContext: VertxTestContext ) {
         dbConfig = InitPg.startPg()
         testContext.completeNow()
     }
