@@ -15,7 +15,7 @@ class DaoTestVerticle( val dbConfig : JsonObject, val test : ( PgPool ) -> Singl
         val client = PgClient.pool( vertx, PgPoolOptions( dbConfig ) )
         test( client )
                 .subscribe(
-                        { t -> startFuture.complete() },
+                        { _ -> startFuture.complete() },
                         { startFuture.fail( "assertions and such" ) }
                 )
     }

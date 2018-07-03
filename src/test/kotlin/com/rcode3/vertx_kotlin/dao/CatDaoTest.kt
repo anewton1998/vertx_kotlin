@@ -33,14 +33,14 @@ object CatDaoTest {
     @DisplayName( "Prepare the database" )
     @BeforeAll
     @JvmStatic
-    fun prepare(vertx: Vertx, testContext: VertxTestContext) {
+    fun prepare( testContext: VertxTestContext) {
         dbConfig = InitPg.startPg()
         testContext.completeNow()
     }
 
     @DisplayName( "Setup data" )
     @BeforeEach
-    fun prepareEach( vertx: Vertx, testContext: VertxTestContext ) {
+    fun prepareEach( testContext: VertxTestContext ) {
         dbSetup( to = InitPg.dataSource!!)
         {
             deleteAllFrom( CatDao.TABLE_NAME )
