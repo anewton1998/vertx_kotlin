@@ -59,7 +59,7 @@ dependencies {
     compile "io.vertx:vertx-jdbc-client:$vertx_version"
     compile "io.vertx:vertx-rx-java2:$vertx_version"
     compile "com.markodevcic.kvalidation:KValidation:1.0.0"
-    compile "io.reactiverse:reactive-pg-client:0.9.0"
+    compile "io.reactiverse:reactive-pg-client:0.11.4"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
     testCompile "com.opentable.components:otj-pg-embedded:0.13.1"
     testCompile "io.vertx:vertx-junit5:$vertx_version"
