@@ -52,7 +52,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     compile "io.github.microutils:kotlin-logging:1.7.2"
-    compile "org.slf4j:slf4j-jdk14:1.7.26"
+    compile "org.slf4j:slf4j-jdk14:1.7.28"
     compile "io.vertx:vertx-core:$vertx_version"
     compile "io.vertx:vertx-lang-kotlin:$vertx_version"
     compile "io.vertx:vertx-sql-common:$vertx_version"
