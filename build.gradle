@@ -63,7 +63,7 @@ dependencies {
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
     testCompile "com.opentable.components:otj-pg-embedded:0.13.1"
     testCompile "io.vertx:vertx-junit5:$vertx_version"
-    testCompile "org.assertj:assertj-core:3.12.2"
+    testCompile "org.assertj:assertj-core:3.16.0"
     testCompile "com.ninja-squad:DbSetup-kotlin:2.1.0"
     // the jupiter-engine version needs to be kept in line with the vertx-junit5 dependency on junit
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.3"
